@@ -1,38 +1,35 @@
 import streamlit as st
 import pickle
-import pandas as pd
+import numpy as np
 
-# Load the saved model and scaler
+# Load the model and scaler
 with open("rf_model.pkl", "rb") as model_file:
     rf_model = pickle.load(model_file)
+
 with open("scaler.pkl", "rb") as scaler_file:
     scaler = pickle.load(scaler_file)
 
-# Streamlit app layout
-st.title("Adherence to Lifestyle Prediction App")
-st.write("Predict adherence based on weekly activity data.")
+# App title
+st.title("Adherence to Lifestyle Prediction")
 
-# Input fields for the user
-st.sidebar.header("Input Features")
-active_minutes = st.sidebar.number_input("Total Active Minutes", min_value=0, value=500)
-total_steps = st.sidebar.number_input("Total Steps", min_value=0, value=8500)
-sedentary_minutes = st.sidebar.number_input("Sedentary Minutes", min_value=0, value=400)
+# Input form
+st.header("Enter weekly data")
+total_active_minutes = st.number_input("Total Active Minutes", min_value=0)
+total_steps = st.number_input("Total Steps", min_value=0)
+sedentary_minutes = st.number_input("Sedentary Minutes", min_value=0)
 
-# Create input data for prediction
-input_data = pd.DataFrame({
-    'TotalActiveMinutes': [active_minutes],
-    'TotalSteps': [total_steps],
-    'SedentaryMinutes': [sedentary_minutes]
-})
+# Predict button
+if st.button("Predict Adherence"):
+    # Prepare the input data
+    input_data = np.array([[total_active_minutes, total_steps, sedentary_minutes]])
+    input_data_scaled = scaler.transform(input_data)
 
-# Scale the input data
-scaled_input = scaler.transform(input_data)
+    # Make predictions
+    adherence_prediction = rf_model.predict(input_data_scaled)
+    adherence_proba = rf_model.predict_proba(input_data_scaled)[:, 1]
 
-# Make prediction
-prediction = rf_model.predict(scaled_input)
-probability = rf_model.predict_proba(scaled_input)[:, 1]
-
-# Display results
-st.subheader("Prediction Results")
-st.write("Adherent" if prediction[0] == 1 else "Non-Adherent")
-st.write(f"Probability of Adherence: {probability[0]:.2f}")
+    # Display the result
+    if adherence_prediction[0] == 1:
+        st.success(f"Prediction: Adherent (Probability: {adherence_proba[0]:.2f})")
+    else:
+        st.error(f"Prediction: Non-Adherent (Probability: {adherence_proba[0]:.2f})")
