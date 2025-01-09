@@ -1,4 +1,4 @@
-import pickle
+ekimport pickle
 import streamlit as st
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
@@ -15,7 +15,7 @@ st.title("Adherence to lifestyle prediction App")
 st.write("Predict weekly adherence based on activity data.")
 
 # Input form
-st.sidebar.header("Input Data")
+st.sidebar.header("Input Data per week")
 total_active_minutes = st.sidebar.number_input("Total Active Minutes", min_value=0, value=300)
 total_steps = st.sidebar.number_input("Total Steps", min_value=0, value=8000)
 sedentary_minutes = st.sidebar.number_input("Sedentary Minutes", min_value=0, value=400)
