@@ -11,7 +11,7 @@ with open("scaler.pkl", "rb") as scaler_file:
     scaler = pickle.load(scaler_file)
 
 # Streamlit App
-st.title("Adherence Prediction App")
+st.title("Adherence to lifestyle prediction App")
 st.write("Predict weekly adherence based on activity data.")
 
 # Input form
